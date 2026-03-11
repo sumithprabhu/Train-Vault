@@ -1,0 +1,88 @@
+import mongoose, { Schema, Document, Model } from "mongoose";
+
+export interface IDataset extends Document {
+  cid: string;
+  ownerApiKey: string;
+  ownerWalletAddress: string;
+  /** Optional human-readable name; unique per user. Multiple versions share the same name. */
+  name?: string | null;
+  /** For named datasets: exactly one version per (owner, name) has isDefault true. */
+  isDefault?: boolean;
+  previousCID: string | null;
+  encrypted: boolean;
+  encryptionType: string;
+  /** True if stored content is gzip-compressed; retrieve will decompress. */
+  compressed?: boolean;
+  /** Compression format used (e.g. "gzip"). Only set when compressed is true. */
+  compressionFormat?: string;
+  storageCost?: string; // wei as string for precision (optional for legacy docs)
+  uploadTimestamp?: Date;
+  createdAt: Date;
+}
+
+const DatasetSchema = new Schema<IDataset>(
+  {
+    cid: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    ownerApiKey: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    ownerWalletAddress: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    name: {
+      type: String,
+      default: null,
+    },
+    isDefault: {
+      type: Boolean,
+      default: false,
+    },
+    previousCID: {
+      type: String,
+      default: null,
+    },
+    encrypted: {
+      type: Boolean,
+      default: false,
+    },
+    encryptionType: {
+      type: String,
+      default: "aes-256-gcm",
+    },
+    compressed: {
+      type: Boolean,
+      default: false,
+    },
+    compressionFormat: {
+      type: String,
+      default: "",
+    },
+    storageCost: {
+      type: String,
+      default: "0",
+    },
+    uploadTimestamp: {
+      type: Date,
+      default: () => new Date(),
+    },
+    createdAt: {
+      type: Date,
+      default: () => new Date(),
+    },
+  },
+  { timestamps: true }
+);
+
+DatasetSchema.index({ ownerApiKey: 1, createdAt: -1 });
+DatasetSchema.index({ ownerApiKey: 1, name: 1, createdAt: -1 });
+
+export const Dataset: Model<IDataset> =
+  mongoose.models.Dataset ?? mongoose.model<IDataset>("Dataset", DatasetSchema);
