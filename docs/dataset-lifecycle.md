@@ -2,6 +2,14 @@
 
 This document describes the full lifecycle of a dataset as implemented in the codebase: from upload request through storage, onchain recording, optional retry, and retrieval.
 
+## Before upload (when treasury is configured)
+
+Storage is **billed per month**; access is **not permanent** (not one payment for permanent access).
+
+1. **User deposits** — The user approves USDFC and calls `deposit(amount)` on the StorageTreasury contract so their on-contract balance is sufficient for uploads and for ongoing per-month cost.
+2. **Prepare (optional)** — The client can call **GET /dataset/prepare** to get **debitPerUploadWei** (amount debited per upload) and **debitPerMonthWei** (amount debited per month for storage). Use this to show cost per upload and per month; ensure balance covers at least the per-month cost to retain access.
+3. **Upload** — Each successful upload deducts the per-upload amount from the user's treasury balance. Storage is billed per month via debitPerMonthWei; access requires ongoing payment.
+
 ## Lifecycle overview
 
 ```mermaid

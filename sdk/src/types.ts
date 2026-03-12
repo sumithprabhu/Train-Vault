@@ -38,6 +38,16 @@ export type DatasetItem = {
   treasuryRecorded?: boolean;
 };
 
+export type DatasetPrepareResponse = {
+  success: true;
+  /** Amount in wei debited from treasury per upload (USDFC 18 decimals). */
+  debitPerUploadWei: string;
+  /** Amount in wei debited per month for storage. Storage is billed per month; access is not permanent. */
+  debitPerMonthWei: string;
+  /** Human-readable note: deposit to treasury; storage is per-month, not permanent. */
+  description: string;
+};
+
 export type DatasetUploadResponse = {
   success: true;
   pieceCID: string;

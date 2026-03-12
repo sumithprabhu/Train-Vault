@@ -44,6 +44,27 @@ export async function upload(req: Request, res: Response): Promise<void> {
 }
 
 /**
+ * GET /dataset/prepare — return the cost that will be debited from the user's treasury per upload.
+ * Call this before upload so the client can show required balance or cost per upload.
+ */
+export async function getPrepare(req: Request, res: Response): Promise<void> {
+  try {
+    const info = datasetService.getPrepareCost();
+    res.json({
+      success: true,
+      debitPerUploadWei: info.debitPerUploadWei,
+      debitPerMonthWei: info.debitPerMonthWei,
+      description: info.description,
+    });
+  } catch (e) {
+    res.status(500).json({
+      success: false,
+      error: e instanceof Error ? e.message : "Prepare failed",
+    });
+  }
+}
+
+/**
  * GET /dataset/:cid/raw — retrieve raw bytes from Filecoin (no decompress, no decrypt). Owner-only.
  */
 export async function getRawByCid(req: Request, res: Response): Promise<void> {

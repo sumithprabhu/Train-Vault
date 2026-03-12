@@ -24,6 +24,10 @@ await corpus.health.check();
 // User — get API key by wallet (no auth)
 const { apiKey } = await corpus.user.create({ walletAddress: "0x..." });
 
+// When treasury is configured: user deposits to StorageTreasury, then call prepare to see cost per upload and per month
+const prep = await corpus.datasets.prepare(); // { debitPerUploadWei, debitPerMonthWei, description } — storage is per-month, not permanent
+// Ensure treasury balance covers at least prep.debitPerMonthWei to retain access, then upload
+
 // Datasets
 const { cid } = await corpus.datasets.upload(file, { name: "my-dataset", encrypt: true });
 const bytes = await corpus.datasets.get(cid);
@@ -55,7 +59,7 @@ const { datasets } = await corpus.treasury.getDatasets();
 |------------|---------|
 | **health** | `check()` |
 | **user**   | `create({ walletAddress })` |
-| **datasets** | `upload(file, options?)`, `createVersion(file, previousCID, options?)`, `list()`, `get(cid, { metadata? })`, `getMetadata(cid)`, `getByName(name, versionCid?)`, `listVersionsByName(name)`, `addVersionByName(name, file, options?)`, `setDefault(name, cid)`, `getRaw(cid)`, `deleteByCid(cid)`, `deleteByName(name)` |
+| **datasets** | `prepare()` — cost debited per upload (call before upload when using treasury), `upload(file, options?)`, `createVersion(file, previousCID, options?)`, `list()`, `get(cid, { metadata? })`, `getMetadata(cid)`, `getByName(name, versionCid?)`, `listVersionsByName(name)`, `addVersionByName(name, file, options?)`, `setDefault(name, cid)`, `getRaw(cid)`, `deleteByCid(cid)`, `deleteByName(name)` |
 | **models** | `register(input)`, `list({ datasetCID? })`, `get(provenanceHash)` |
 | **treasury** | `getBalance()`, `getDatasets()` |
 

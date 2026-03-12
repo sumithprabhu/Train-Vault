@@ -3,6 +3,7 @@ import type {
   DatasetItem,
   DatasetListResponse,
   DatasetMetadataResponse,
+  DatasetPrepareResponse,
   DatasetUploadResponse,
   DatasetVersionsResponse,
   SetDefaultResponse,
@@ -28,6 +29,14 @@ export function datasetApi(config: CorpusConfig) {
   const client = createClient(config);
 
   return {
+    /**
+     * GET /dataset/prepare — Cost per upload and per month. Storage is billed per month; access is not permanent.
+     * Call before upload to show debitPerUploadWei and debitPerMonthWei. User should deposit to StorageTreasury first.
+     */
+    async prepare(): Promise<DatasetPrepareResponse> {
+      return client.get<DatasetPrepareResponse>("/dataset/prepare");
+    },
+
     /**
      * POST /dataset/upload — Upload a new dataset.
      * For a new named dataset, pass options.name. Optional: encrypt, previousCID.

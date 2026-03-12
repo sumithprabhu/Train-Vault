@@ -7,11 +7,29 @@ import { encryptDataset, decryptDataset } from "../utils/encryption.js";
 import { compressForStorage, decompressFromStorage } from "../utils/compression.js";
 import { config } from "../config/index.js";
 import * as treasury from "../helpers/treasury.js";
-import { getStorageCost } from "../helpers/storageCost.js";
+import { getStorageCost, getStorageCostPerMonth } from "../helpers/storageCost.js";
 import { enqueuePendingRecord } from "./treasuryRetry.service.js";
 import { keccak256 } from "viem";
 
 const COMPRESSION_FORMAT_GZIP = "gzip";
+
+/**
+ * Prepare: return the cost debited per upload and per month. Storage is billed per month; access is not permanent.
+ */
+export function getPrepareCost(): {
+  debitPerUploadWei: string;
+  debitPerMonthWei: string;
+  description: string;
+} {
+  const perUpload = getStorageCost();
+  const perMonth = getStorageCostPerMonth();
+  return {
+    debitPerUploadWei: perUpload.toString(),
+    debitPerMonthWei: perMonth.toString(),
+    description:
+      "Storage is billed per month; access is not permanent. debitPerUploadWei is debited for each upload. debitPerMonthWei is the amount debited per month for storage. Deposit to the StorageTreasury contract so your balance covers at least the per-month cost to retain access.",
+  };
+}
 
 const ENCRYPTION_TYPE = "aes-256-gcm";
 

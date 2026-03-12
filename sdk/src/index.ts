@@ -53,6 +53,7 @@ export type {
   HealthResponse,
   CreateUserResponse,
   DatasetItem,
+  DatasetPrepareResponse,
   DatasetUploadResponse,
   DatasetListResponse,
   DatasetMetadataResponse,

@@ -66,9 +66,10 @@ Used in `config/index.ts` and `helpers/treasury.ts`. USDFC token on Calibration:
 
 | Name | Description | Example | Required |
 |------|-------------|---------|----------|
-| `STORAGE_COST_FIXED_WEI` | Fixed storage cost per upload in wei (18 decimals). Only fixed cost is used; no per-byte pricing. | `1000000000000000` | No (default 1000000000000000) |
+| `STORAGE_COST_FIXED_WEI` | Fixed storage cost per upload in wei (18 decimals). | `1000000000000000` | No (default 1000000000000000) |
+| `STORAGE_COST_PER_MONTH_WEI` | Storage cost per month in wei. Storage is billed per month; access is not permanent. Defaults to `STORAGE_COST_FIXED_WEI` if unset. | `1000000000000000` | No |
 
-Read in `config/index.ts` and returned by `helpers/storageCost.ts` `getStorageCost()`.
+Read in `config/index.ts`. `helpers/storageCost.ts`: `getStorageCost()` returns per-upload; `getStorageCostPerMonth()` returns per-month.
 
 ---
 

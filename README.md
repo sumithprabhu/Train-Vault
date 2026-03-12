@@ -40,8 +40,12 @@ npm run dev
 import Corpus from "corpus-sdk";
 
 const corpus = new Corpus({ apiKey: process.env.CORPUS_API_KEY });
-const cid = await corpus.uploadDataset(file);
-const dataset = await corpus.retrieveDataset(cid);
+
+// When treasury is configured: user deposits to StorageTreasury, then:
+const prep = await corpus.datasets.prepare(); // debitPerUploadWei, debitPerMonthWei (storage is per-month, not permanent)
+// Ensure balance covers at least prep.debitPerMonthWei to retain access, then upload:
+const { cid } = await corpus.datasets.upload(file, { name: "my-dataset" });
+const bytes = await corpus.datasets.get(cid);
 ```
 
 ## Contracts (Hardhat)

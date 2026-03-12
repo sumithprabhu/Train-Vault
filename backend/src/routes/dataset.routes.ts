@@ -7,6 +7,7 @@ const router = Router();
 
 router.use(apiKeyAuth);
 
+router.get("/prepare", datasetController.getPrepare);
 router.post("/upload", uploadSingle, datasetController.upload);
 router.post("/version", uploadSingle, datasetController.createVersion);
 router.get("/", datasetController.list);

@@ -30,8 +30,10 @@ export const config = {
     | "calibration"
     | "mainnet",
   synapseOperatorPrivateKey: process.env.SYNAPSE_OPERATOR_PRIVATE_KEY?.trim() ?? "",
-  /** Fixed storage cost per upload in wei (USDFC 18 decimals). Only fixed cost is used. */
+  /** Fixed storage cost per upload in wei (USDFC 18 decimals). */
   storageCostFixedWei: BigInt(process.env.STORAGE_COST_FIXED_WEI ?? "1000000000000000"),
+  /** Storage cost per month in wei (USDFC 18 decimals). Billed per month; access is not permanent. Defaults to same as fixed if unset. */
+  storageCostPerMonthWei: BigInt(process.env.STORAGE_COST_PER_MONTH_WEI ?? process.env.STORAGE_COST_FIXED_WEI ?? "1000000000000000"),
   treasury: {
     contractAddress: process.env.TREASURY_CONTRACT_ADDRESS?.trim() ?? null,
     rpcUrl: process.env.RPC_URL?.trim() ?? null,

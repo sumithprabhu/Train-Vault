@@ -57,6 +57,31 @@ All dataset routes require `x-api-key`.
 
 Datasets can be **unnamed** (identified only by CID) or **named** (e.g. `railway`, `bus`). Names are unique per user: two users can each have a dataset named `railway`; one user cannot have two datasets both named `railway`. For named datasets, one version is the **default** (by default the latest upload); download by name returns the default unless `?version=<cid>` is specified.
 
+**Suggested flow when treasury is configured:** (1) User deposits USDFC to the StorageTreasury contract. (2) Call **GET /dataset/prepare** to get **debitPerUploadWei** and **debitPerMonthWei**. (3) Ensure treasury balance covers at least the per-month cost (storage is billed per month; access is not permanent). Then call POST /dataset/upload or other upload endpoints.
+
+### GET /dataset/prepare
+
+- **Method:** GET  
+- **Path:** `/dataset/prepare`  
+- **Description:** Return the cost debited **per upload** and **per month**. Storage is billed per month; access is not permanent. Use this before upload so the client can show required balance and per-month cost. The user should deposit to the StorageTreasury contract so their balance covers at least the per-month cost to retain access.  
+- **Authentication:** Required (`x-api-key`).  
+- **Response:**  
+  - `200`: `{ "success": true, "debitPerUploadWei": "<wei string>", "debitPerMonthWei": "<wei string>", "description": "..." }`  
+  - `500`: `{ "success": false, "error": "..." }`
+
+**Example response (200):**
+
+```json
+{
+  "success": true,
+  "debitPerUploadWei": "1000000000000000",
+  "debitPerMonthWei": "1000000000000000",
+  "description": "Storage is billed per month; access is not permanent. debitPerUploadWei is debited for each upload. debitPerMonthWei is the amount debited per month for storage. Deposit to the StorageTreasury contract so your balance covers at least the per-month cost to retain access."
+}
+```
+
+**Note:** **debitPerMonthWei** is the amount debited per month for storage; access requires ongoing payment and is not one-time permanent.
+
 ### POST /dataset/upload
 
 - **Method:** POST  

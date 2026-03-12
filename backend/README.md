@@ -32,6 +32,7 @@ Node.js + Express + MongoDB backend for dataset and model provenance. **Datasets
 
 ### How datasets are stored (Synapse SDK + optional Treasury)
 
+- **Suggested flow (with treasury):** (1) User deposits USDFC to the StorageTreasury contract. (2) Client calls **GET /dataset/prepare** to get `debitPerUploadWei` and **debitPerMonthWei**. Storage is billed per month; access is not permanent. (3) Client ensures balance covers at least the per-month cost, then uploads.
 - **Upload (with treasury)**:
   1. Backend checks user’s balance in **StorageTreasury** contract.
   2. Storage cost is **STORAGE_COST_FIXED_WEI** (fixed per upload).
@@ -48,6 +49,7 @@ Node.js + Express + MongoDB backend for dataset and model provenance. **Datasets
 - **POST /user/create** — Body: `{ "walletAddress": "0x..." }`. Returns `apiKey`. No auth.
 - **GET /treasury/balance** — Returns `{ success, balance }` for the authenticated user's wallet (requires `x-api-key`). 503 if treasury is not configured.
 - **GET /treasury/datasets** — Returns `{ success, datasets }` listing all datasets owned by the authenticated user (from database; requires `x-api-key`).
+- **GET /dataset/prepare** — Returns `{ success, debitPerUploadWei, debitPerMonthWei, description }`: cost per upload and per month. Storage is billed per month; access is not permanent. Call before upload to show cost or required balance.
 - **POST /dataset/upload** — Multipart: `file`; optional `encrypt`, `previousCID`. If treasury enabled: checks balance ≥ estimated cost; returns **402 INSUFFICIENT_STORAGE_BALANCE** otherwise. Returns `{ pieceCID, cid, storageCost }`.
 - **GET /dataset** — List datasets for the API key.
 - **GET /dataset/:cid** — Retrieve file by piece CID (or `?metadata=1` for metadata only).
