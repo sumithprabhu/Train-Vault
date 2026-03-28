@@ -1,4 +1,4 @@
-# ![Corpus](frontend/public/logo.png) Corpus
+# <img src="frontend/public/logo.png" alt="Corpus" width="40"/> Corpus
 
 **Dataset and model provenance on Filecoin.**
 
