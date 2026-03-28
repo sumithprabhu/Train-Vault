@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog"
 import { getApiKey, apiGet, API_BASE } from "@/lib/api"
 import { TREASURY_ADDRESS } from "@/lib/treasury-contract"
-import { Search, Upload, Copy, Download, ExternalLink } from "lucide-react"
+import { Search, Upload, Copy, Download, ExternalLink, Loader2 } from "lucide-react"
 
 type DatasetItem = {
   cid: string
@@ -304,7 +304,7 @@ export function DatasetsPageContent() {
               className="w-full font-mono uppercase"
               onClick={handleUpload}
             >
-              {uploading ? "Uploading…" : "Upload"}
+              {uploading ? <><Loader2 size={13} className="mr-2 animate-spin" />Uploading…</> : "Upload"}
             </Button>
           </div>
         </DialogContent>

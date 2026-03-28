@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { getApiKey, apiGet, apiPost, apiDelete } from "@/lib/api"
-import { Copy, BookOpen, Plus, Trash2 } from "lucide-react"
+import { Copy, BookOpen, Plus, Trash2, Loader2 } from "lucide-react"
 
 type ApiKeyRow = {
   id: string
@@ -124,7 +124,7 @@ export default function SecurityPage() {
               onClick={() => setCreateOpen(true)}
               disabled={busy}
             >
-              <Plus size={14} className="mr-2" />
+              {busy ? <Loader2 size={14} className="mr-2 animate-spin" /> : <Plus size={14} className="mr-2" />}
               Create API key
             </Button>
             <Button
@@ -176,7 +176,7 @@ export default function SecurityPage() {
                               title="Revoke key"
                               disabled={busy}
                             >
-                              <Trash2 size={12} />
+                              {busy ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
                             </Button>
                           )}
                         </div>
@@ -247,7 +247,7 @@ export default function SecurityPage() {
               />
             </div>
             <Button className="w-full font-mono uppercase" onClick={() => void createKey()} disabled={busy}>
-              Create
+              {busy ? <><Loader2 size={13} className="mr-2 animate-spin" />Creating…</> : "Create"}
             </Button>
           </div>
         </DialogContent>

@@ -32,20 +32,18 @@
    └─ Billing Worker    → monthly debit sweep (every 30 days)
         │
         ▼
- MongoDB  (metadata, ownership, pending records)
+ Filecoin  (file content + on-chain records, indexed for API access)
 ```
 
-**Five components:**
+**Four components:**
 
 1. **StorageTreasury.sol** — On-chain contract on Filecoin Calibration. Holds USDFC deposits. Only the executor wallet can call `recordAndDeduct`, which atomically deducts balance and records the dataset CID in one transaction. Ownable + Pausable.
 
-2. **Backend** — Express + TypeScript. Handles the full dataset flow: optional AES-256-GCM encryption → balance check → Synapse upload → `recordAndDeduct` → MongoDB write. If the on-chain call fails transiently, it's enqueued and retried every 60 seconds.
+2. **Backend** — Express + TypeScript. Handles the full dataset flow: optional AES-256-GCM encryption → balance check → Synapse upload → `recordAndDeduct` → metadata indexed for API access. If the on-chain call fails transiently, it's enqueued and retried every 60 seconds.
 
-3. **MongoDB** — Stores dataset metadata (CID, ownership, versioning, ACL), API keys, model runs, and the pending treasury retry queue. File content never touches MongoDB — it lives on Filecoin.
+3. **Synapse / Filecoin** — Content-addressed storage. Upload returns a piece CID that becomes the canonical dataset identifier everywhere — in the API, in the contract, in provenance hashes. Every dataset version is stored on Filecoin and addressed by its own CID.
 
-4. **Synapse / Filecoin** — Content-addressed storage. Upload returns a piece CID that becomes the canonical dataset identifier everywhere — in the API, in the contract, in provenance hashes.
-
-5. **SDK** — Thin TypeScript client. `corpus.datasets.upload()`, `corpus.models.register()`, `corpus.treasury.getBalance()` — wraps all API calls with typed responses.
+4. **SDK** — Thin TypeScript client. `corpus.datasets.upload()`, `corpus.models.register()`, `corpus.treasury.getBalance()` — wraps all API calls with typed responses.
 
 ---
 
@@ -57,7 +55,7 @@
 - **Named datasets** — Give a dataset a name (e.g. `railway-v1`). Names are unique per user. Upload to the same name creates versioned history.
 - **Versioning** — `POST /dataset/by-name/:name/version` adds a new version; it becomes the default. `GET /dataset/by-name/:name/versions` lists the full history.
 - **Download** — `GET /dataset/:cid` returns the file, auto-decrypting if needed. `?metadata=1` returns metadata only. `/raw` returns unprocessed bytes straight from Filecoin.
-- **Delete** — Removes the MongoDB record. Data on Filecoin is immutable; the CID is simply no longer served via the API.
+- **Delete** — Removes the dataset from the API. Data on Filecoin is immutable; the CID is simply no longer served via the API.
 
 ### Access Control (ACL)
 

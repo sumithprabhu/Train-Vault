@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { apiGet, apiPost } from "@/lib/api"
-import { Copy } from "lucide-react"
+import { Copy, Loader2, RefreshCw } from "lucide-react"
 
 type ModelRun = {
   id: string
@@ -126,7 +126,7 @@ export default function ModelsPage() {
             disabled={busy || !datasetCID.trim() || !modelArtifactCID.trim() || !trainingConfigHash.trim() || !trainingCodeHash.trim()}
             onClick={() => void register()}
           >
-            {busy ? "Registering…" : "Register"}
+            {busy ? <><Loader2 size={13} className="mr-2 animate-spin" />Registering…</> : "Register"}
           </Button>
           <p className="text-[10px] text-muted-foreground font-mono">
             Tip: after registering, provenance hash is copied automatically.
@@ -143,7 +143,7 @@ export default function ModelsPage() {
           <div className="flex gap-2">
             <Input className="font-mono text-xs" value={filterDataset} onChange={(e) => setFilterDataset(e.target.value)} placeholder="Filter by dataset CID…" />
             <Button variant="outline" className="font-mono uppercase text-xs" onClick={() => void load()} disabled={loading}>
-              Refresh
+              {loading ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} />}
             </Button>
           </div>
         </CardHeader>

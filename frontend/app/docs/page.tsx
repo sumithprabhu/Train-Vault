@@ -13,7 +13,6 @@ const OVERVIEW_DIAGRAM = `flowchart LR
     MS[Model service]
   end
   subgraph External
-    M[(MongoDB)]
     F[Filecoin / Synapse]
     C[StorageTreasury]
   end
@@ -21,9 +20,7 @@ const OVERVIEW_DIAGRAM = `flowchart LR
   R --> DS
   R --> MS
   DS --> TR
-  DS --> M
   DS --> F
-  MS --> M
   TR --> C`
 
 export default function DocsOverviewPage() {

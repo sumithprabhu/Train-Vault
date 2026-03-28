@@ -46,7 +46,6 @@ const COMPONENTS = `flowchart TB
     RW[treasuryRetry]
   end
   subgraph External
-    M[(MongoDB)]
     FIL[Filecoin / Synapse]
     SC[StorageTreasury]
   end
@@ -55,7 +54,6 @@ const COMPONENTS = `flowchart TB
   R --> MS
   DS --> SY
   DS --> TH
-  DS --> M
   RW --> TH
   TH --> SC
   SY --> FIL`
@@ -71,8 +69,8 @@ export default function ArchitecturePage() {
       </h1>
 
       <p className="text-sm text-foreground/90 mb-8 max-w-2xl">
-        Corpus is an Express + MongoDB control plane coordinating Synapse uploads and optional viem-driven
-        calls to StorageTreasury. File bytes never land in Mongo—only metadata, hashes, and retry queues.
+        Corpus is an Express control plane coordinating Synapse uploads and optional viem-driven
+        calls to StorageTreasury. All file content is stored on Filecoin — content-addressed by piece CID.
       </p>
 
       <h2 className="text-lg font-bold uppercase mb-2 border-l-4 border-[#ea580c] pl-3">
@@ -92,8 +90,8 @@ export default function ArchitecturePage() {
 
       <div className="mt-12 border-2 border-foreground p-5 text-xs font-mono text-muted-foreground space-y-3">
         <p>
-          <span className="text-foreground font-bold uppercase">MongoDB</span> — users/API keys, dataset
-          documents, pending treasury rows, model run registry.
+          <span className="text-foreground font-bold uppercase">Filecoin / Synapse</span> — all dataset content
+          stored decentralized, content-addressed by piece CID. Every version gets its own immutable CID.
         </p>
         <p>
           <span className="text-foreground font-bold uppercase">Executor wallet</span> — only actor that can
